@@ -34,7 +34,7 @@ export default function Navbar() {
                     id="navbarSupportedContentE"
                 >
                     <ul
-                        className="mr-auto flex flex-col md:flex-row"
+                        className="mr-auto flex flex-col md:flex-row cursor-pointer"
                     >
                         <li >
                             <Link path={"home"} >Home</Link>
@@ -43,7 +43,7 @@ export default function Navbar() {
                             <Link path={"about"}>About Us</Link>
                         </li>
                         <li >
-                            <Link path={"/contact"}>Contact</Link>
+                            <Link path={"contact"}>Contact</Link>
                         </li>
                     </ul>
                 </div>
