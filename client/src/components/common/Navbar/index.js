@@ -42,9 +42,9 @@ export default function Navbar() {
                         <li >
                             <Link path={"about"}>About Us</Link>
                         </li>
-                        <li >
+                        {/* <li >
                             <Link path={"contact"}>Contact</Link>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
             </div>
