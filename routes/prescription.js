@@ -11,10 +11,10 @@ recordRoutes.use(requireAuth)
 recordRoutes.get('/', getPrescriptions);
 
 // GET My prescription
-recordRoutes.get('/:id', getPrescription);
+recordRoutes.get('/my', getMyPrescription);
 
 // GET My prescription
-recordRoutes.get('/my', getMyPrescription);
+recordRoutes.get('/:id', getPrescription);
 
 // GET a prescription by user_id
 recordRoutes.get('/user/:id', getPrescriptionByUser);
