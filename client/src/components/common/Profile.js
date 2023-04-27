@@ -14,7 +14,7 @@ export default function Profile({ profileInfo }) {
     }
 
     return (
-        <div className="w-full flex text-[30px] bg-[#cde1f08a] p-[20px] rounded-[20px] items-center">
+        <div className="w-full flex text-[30px] bg-[#cef5ff] shadow-lg p-[20px] rounded-[20px] items-center">
             <div className="flex justify-evenly w-full  ">
                 <div className="py-[10px] ">
                     <img className="w-[200px] h-[200px] rounded-full border-[1px] mb-[20px] " src={dummy} alt='profile avathar' />

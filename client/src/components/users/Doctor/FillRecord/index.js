@@ -58,7 +58,7 @@ export default function FillRecord() {
         }
 
         return (
-            <div className="w-full flex text-[22px] bg-[#cde1f08a] p-[20px] py-[15px] rounded-[20px] items-center">
+            <div className="w-full flex text-[22px] bg-[#def9ff] p-[20px] py-[15px] rounded-[20px] shadow-lg items-center">
                 <div className="flex justify-evenly w-full  ">
 
                     <div className="py-[5px] ">
