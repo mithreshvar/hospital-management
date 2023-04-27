@@ -97,7 +97,7 @@ export default function EditProfile({ setSelected, isprofileFilled, setIsProfile
         <div className='text-[30px] font-Fredoka '>
             {(isprofileFilled === 'no') && <div className='p-[20px] '>Please Fill All The Details !</div>}
             {(isprofileFilled === 'done') && <div className='p-[20px] '>Profile filled successfully !</div>}
-            <div className="w-full flex bg-[#cde1f08a] p-[20px] rounded-[20px] items-center">
+            <div className="w-full flex bg-[#cde1f08a] shadow-lg p-[20px] rounded-[20px] items-center">
                 <form className="flex justify-evenly w-full  ">
                     <div className="py-[10px] ">
                         <img className="w-[200px] h-[200px] rounded-full border-[1px] mb-[20px] " src={dummy} alt='profile avathar' />
