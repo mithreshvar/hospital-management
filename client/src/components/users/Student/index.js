@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import StudentProfile from "./StudentProfile";
 import Button from "../../common/Button";
 import { useState, useEffect } from "react";
@@ -6,23 +6,38 @@ import StudentHistory from "./StudentHistory";
 import EditProfile from "./EditProfile";
 
 import { useWaitingListsContext } from "../../../hooks/useWaitingListsContext";
+import LogoutButton from "../../common/LogoutButton";
+import { useAuthContext } from "../../../hooks/useAuthContext";
+
 
 export default function Student() {
-    const { dispatch } = useWaitingListsContext()
+    const { dispatch } = useWaitingListsContext();
+    const { user } = useAuthContext();
+    const navigate = useNavigate();
     let [profileInfo, setProfileInfo] = useState(null);
+    let [isprofileFilled, setIsProfileFilled] = useState('no');
 
-    // useEffect(() => {
-    //     const fetchWaitingList = async () => {
-    //         const response = await fetch("/api/patientProfile/id"); // ????????  id  ??????????
-    //         const json = await response.json();
+    useEffect(() => {
+        const fetchPatientProfile = async () => {
+            setIsProfileFilled('no');
+            const response = await fetch("/api/patientProfiles/my", {
+                headers: { 'Authorization': `Bearer ${user.token}` },
+            });
 
-    //         if (response.ok) {
-    //             setProfileInfo(json);
-    //         }
-    //     }
+            if (!response.ok) {
+                navigate("/edit");
+            }
 
-    //     fetchWaitingList();
-    // }, []);
+            const json = await response.json();
+            if (response.ok) {
+                setProfileInfo(json);
+                setIsProfileFilled('yes');
+                navigate('/myProfile');
+            }
+        }
+
+        fetchPatientProfile();
+    }, []);
 
     let [selected, setSelected] = useState('');
     let [postedAppointment, setPostedAppointment] = useState(false);
@@ -34,8 +49,8 @@ export default function Student() {
 
         const response = await fetch("/api/waitingList/", {
             method: "POST",
-            body: JSON.stringify({ rollno: "21CS009", name: "Jhon Doe" }),
-            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rollno: profileInfo.rollno, name: profileInfo.name }),
+            headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${user.token}` },
         });
         const json = await response.json();
         setPostedAppointment(true); // Appointment sent overlay message
@@ -56,6 +71,8 @@ export default function Student() {
         }, 4000); // hide the overlay
     }
 
+
+
     return (
         <div className=" flex h-screen w-full ">
             <div className="flex justify-center bg-[#8fcfff] h-full w-[17%]  " >
@@ -64,13 +81,14 @@ export default function Student() {
                     <Button id={'history'} selected={selected} setSelected={setSelected} theme={'blue'} >My History</Button>
                     <Button id={'edit'} selected={selected} setSelected={setSelected} theme={'blue'} >Edit Profile</Button>
                 </div>
+                <LogoutButton />
             </div>
             <div className="bg-[#8fcfff] h-full w-[83%] p-[20px]  ">
                 <div className="bg-[#f4f6fc] h-full py-[40px] px-[70px] rounded-[40px] overflow-scroll  " >
                     <Routes>
-                        <Route path="/myProfile" element={<StudentProfile setOverlay={setAppointmentOverlay} setSelected={setSelected} />} />
+                        <Route path="/myProfile" element={<StudentProfile setOverlay={setAppointmentOverlay} setSelected={setSelected} profileInfo={profileInfo} />} />
                         <Route path="/history" element={<StudentHistory setSelected={setSelected} />} />
-                        <Route path="/edit" element={<EditProfile setSelected={setSelected} />} />
+                        <Route path="/edit" element={<EditProfile setSelected={setSelected} isprofileFilled={isprofileFilled} setIsProfileFilled={setIsProfileFilled} user={user} profileInfo={profileInfo} setProfileInfo={setProfileInfo} />} />
                     </Routes>
                 </div>
             </div>
@@ -96,7 +114,6 @@ export default function Student() {
                                         <button className="w-[100px] h-[50px] bg-[#ff3131] flex items-center justify-center rounded-[15px] " onClick={() => setAppointmentOverlay(false)}  >No</button>
                                     </div>
                                 </div>
-
                         }
                     </div>
                 </div>

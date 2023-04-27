@@ -6,14 +6,13 @@ const cors = require("cors");
 const path = require("path");
 const waitingListRoutes = require("./routes/waitingList");
 const patientProfilesRoutes = require("./routes/patientProfile");
+const userRoutes = require('./routes/user');
+const prescriptionRoutes = require('./routes/prescription');
+const historyLogRoutes = require('./routes/historyLog');
 
 
 const app = express();
 const port = process.env.PORT;
-const paths = {
-    auth: "/api/auth",
-    homepage: "/api/homepage",
-};
 
 // middlewares
 app.use(cors());
@@ -33,8 +32,10 @@ app.use((req, res, next) => {
 })
 app.use("/api/waitingList", waitingListRoutes);
 app.use("/api/patientProfiles", patientProfilesRoutes);
-app.use(paths.auth, require("./routes/auth"));
-//app.use(paths.homepage, require("../routes/homepage"));
+app.use('/api/user', userRoutes);
+app.use('/api/prescription', prescriptionRoutes);
+app.use('/api/historyLog', historyLogRoutes);
+
 // Catch all requests that don't match any route
 app.get("*", (req, res) => {
     res.sendFile(

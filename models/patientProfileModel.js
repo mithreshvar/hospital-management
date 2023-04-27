@@ -12,7 +12,7 @@ const patientProfileSchema = new Schema({
         required: true
     },
     year: {
-        type: Number,
+        type: String,
         required: true
     },
     classAndSec: {
@@ -24,11 +24,15 @@ const patientProfileSchema = new Schema({
         required: true
     },
     dob: {
-        type: Date,
+        type: String,
         required: true
     },
     bloodGroup: {
         type: String,
+        required: true
+    },
+    age: {
+        type: Number,
         required: true
     },
     height: {
@@ -40,6 +44,10 @@ const patientProfileSchema = new Schema({
         required: true
     },
     allergies: {
+        type: String,
+        required: true
+    },
+    user_id: {
         type: String,
         required: true
     }

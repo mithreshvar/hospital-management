@@ -28,10 +28,11 @@ const getWaitingList = async (req, res) => {
 // create a waitingList
 const createWaitingList = async (req, res) => {
     const { rollno, name } = req.body;
+    const user_id = req.user._id;
 
     //add to db
     try {
-        const waitingList = await WaitingList.create({ rollno, name });
+        const waitingList = await WaitingList.create({ rollno, name, user_id });
         res.status(200).json(waitingList);
     } catch (error) {
         res.status(400).json({ error: error.message });

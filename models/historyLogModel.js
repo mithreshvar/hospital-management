@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId;
 
-const waitingListSchema = new Schema({
+const historyLogSchema = new Schema({
     rollno: {
         type: String,
         required: true
@@ -15,7 +15,11 @@ const waitingListSchema = new Schema({
     user_id: {
         type: ObjectId,
         required: true,
+    },
+    prescription_id: {
+        type: ObjectId,
+        required: true,
     }
 }, { timestamps: true })
 
-module.exports = mongoose.model('WaitingList', waitingListSchema)
+module.exports = mongoose.model('HistoryLog', historyLogSchema)

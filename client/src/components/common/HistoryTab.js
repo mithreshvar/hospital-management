@@ -1,4 +1,4 @@
-export default function History() {
+export default function HistoryTab({ currentHistory }) {
 
     //component
     function Field({ content }) {
@@ -15,11 +15,11 @@ export default function History() {
         <div className="w-full flex text-[30px] p-[20px] rounded-[20px] items-center" >
             <div className="flex justify-evenly w-full  ">
                 <div className="p-[30px] gap-y-[20px] font-Fredoka flex flex-col justify-between  rounded-[20px] bg-[#f8feff] shadow-lg ">
-                    <Field content={["Date", "03/03/3030"]} />
-                    <Field content={["Medical Problem", "Fever"]} />
-                    <Field content={["Temperature", <span>98&#xb0;</span>]} />
-                    <Field content={["Days", "3"]} />
-                    <Field content={["Prescription", "Paracetamol"]} />
+                    <Field content={["Date", currentHistory.date]} />
+                    <Field content={["Medical Problem", currentHistory.medicalProblem]} />
+                    <Field content={["Temperature", currentHistory.temperature]} />
+                    <Field content={["Days", currentHistory.days]} />
+                    <Field content={["Prescription", currentHistory.prescription]} />
                 </div>
             </div>
         </div>

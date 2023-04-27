@@ -1,29 +1,32 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login } from "../api";
+// import { useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin"
 
-export default function Login({ onLoginSuccessful }) {
-    const navigate = useNavigate();
+export default function Login() {
+    // const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [hasError, setHasError] = useState(false);
+    const { login, error, isLoading } = useLogin()
 
     const onEmailChange = (event) => setEmail(event.target.value);
     const onPasswordChange = (event) => setPassword(event.target.value);
 
+    // function until(conditionFunction) {
+
+    //     const poll = resolve => {
+    //         if (conditionFunction()) resolve();
+    //         else setTimeout(_ => poll(resolve), 400);
+    //     }
+
+    //     return new Promise(poll);
+    // }
+
     const onSubmit = async (event) => {
         event.preventDefault();
-        setHasError(false);
-        const loginResult = await login({ email, password });
-        if (!loginResult) setHasError(true);
-        else {
-            const { name, token, userType } = loginResult;
-            // Save user IDs on local storage
-            sessionStorage.setItem("name", name);
-            sessionStorage.setItem("token", token);
-            onLoginSuccessful(userType);
-            navigate('/');
-        }
+
+        await login(email, password);
+        // await until(_ => isLoading === false);
+        //if (!error) navigate("/");
     };
 
     return (
@@ -48,13 +51,9 @@ export default function Login({ onLoginSuccessful }) {
                             onChange={onPasswordChange}
                             value={password}
                         />
-                        {hasError && (
-                            <div className="text-red-600 text-[16px] absolute bottom-[-28px] ">
-                                The username and/or password you specified are not correct.
-                            </div>
-                        )}
+                        {error && <div className="text-red-600 text-[16px] absolute bottom-[-28px]">{error}</div>}
                     </div>
-                    <button type="submit" className=" border-[2px] mt-[35px] h-[50px] w-full rounded-[10px] hover:bg-[#333333] bg-[#6675DE] text-white " >Submit</button>
+                    <button type="submit" disabled={isLoading} className=" border-[2px] mt-[35px] h-[50px] w-full rounded-[10px] hover:bg-[#333333] bg-[#6675DE] text-white " >Submit</button>
                 </form>
             </div>
         </div>

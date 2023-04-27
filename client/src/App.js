@@ -1,37 +1,24 @@
-import React, { useEffect, useState } from "react";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { useAuthContext } from './hooks/useAuthContext'
+
 import Prelogin from './components/Prelogin';
 import Login from './components/Login';
-import Home from './components/Home';
+import Signup from "./components/Signup";
+import Student from "./components/users/Student";
+import Doctor from "./components/users/Doctor";
 
 //  "proxy": "http://localhost:8080",
 
 function App() {
 
-  const [isUserSignedIn, setIsUserSignedIn] = useState(false);
-  const [userType, setUserType] = useState('');
-
-  useEffect(() => {
-    if (sessionStorage.getItem("token")) setIsUserSignedIn(true);
-    else setIsUserSignedIn(false);
-  }, []);
-
-  const onLoginSuccessful = (userType) => {
-    setUserType(userType);
-    setIsUserSignedIn(true);
-  };
-
-  const onLogout = () => {
-    sessionStorage.removeItem("name");
-    sessionStorage.removeItem("token");
-    setIsUserSignedIn(false);
-  };
+  const { user } = useAuthContext(); // !!!! need user type
 
   return (
 
     <Routes>
-      <Route path="/*" element={(true) ? <Home type={"Student"} /> : <Prelogin />} />
-      <Route path="/login" element={<Login onLoginSuccessful={onLoginSuccessful} />} />
+      <Route path="/*" element={!user ? <Prelogin /> : (user.type === 'Student' && <Student />) || (user.type === 'Doctor' && <Doctor />) || (user.type === 'Teacher' && <div>Teacher</div>)} />
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+      <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
     </Routes>
 
   );
