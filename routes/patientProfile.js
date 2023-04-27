@@ -16,11 +16,11 @@ recordRoutes.get('/my', getMyPatientProfile);
 // GET a PatientProfile
 recordRoutes.get('/:id', getPatientProfile);
 
-// GET a PatientProfile by rollno
-//recordRoutes.get('/:data/:id', getPatientProfileByData);
-
 // GET a PatientProfile by user_id
 recordRoutes.get('/user/:id', getPatientProfileByUser);
+
+// GET a PatientProfile by rollno
+//recordRoutes.get('/:data/:id', getPatientProfileByData);
 
 // POST a new PatientProfile
 recordRoutes.post('/', createPatientProfile);
