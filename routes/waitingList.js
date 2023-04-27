@@ -1,8 +1,12 @@
 const express = require("express");
 const { createWaitingList, getWaitingList, getWaitingLists, deleteWaitingList, updateWaitingList } = require("../controllers/waitingListController");
+const requireAuth = require("../middleware/requireAuth");
 
 
 const recordRoutes = express.Router();
+
+// require auth for all workout routes
+recordRoutes.use(requireAuth)
 
 // GET all waitinglists
 recordRoutes.get('/', getWaitingLists);

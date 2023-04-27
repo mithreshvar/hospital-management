@@ -2,65 +2,124 @@ import { useState } from 'react';
 import dummy from '../../../assets/avatar-dummy.png';
 import InputField from './InputField';
 
-export default function EditProfile({ setSelected }) {
+export default function EditProfile({ setSelected, isprofileFilled, setIsProfileFilled, user, profileInfo, setProfileInfo }) {
     setSelected('edit');
 
-    const [name, setName] = useState("Jhon Doe");
-    const [year, setYear] = useState("2nd year");
-    const [rollNo, setRollNo] = useState("21CS001");
-    const [userclass, setUserClass] = useState("CSE - A");
-    const [gender, setGender] = useState("Unknown");
-    const [dob, setDob] = useState("01 / 01 / 0001");
-    const [blood, setBlood] = useState("O+");
-    const [age, setAge] = useState("18");
-    const [height, setHeight] = useState("152 cm");
-    const [weight, setWeight] = useState("60 kg");
-    const [allergies, setAllergies] = useState("Air, Water, Sand");
+    const [name, setName] = useState(profileInfo ? profileInfo.name : "");
+    const [year, setYear] = useState(profileInfo ? profileInfo.year : "");
+    const [rollNo, setRollNo] = useState(profileInfo ? profileInfo.rollno : "");
+    const [classAndSec, setClassAndSec] = useState(profileInfo ? profileInfo.classAndSec : "");
+    const [gender, setGender] = useState(profileInfo ? profileInfo.gender : "");
+    const [dob, setDob] = useState(profileInfo ? profileInfo.dob : "");
+    const [blood, setBlood] = useState(profileInfo ? profileInfo.bloodGroup : "");
+    const [age, setAge] = useState(profileInfo ? profileInfo.age : "");
+    const [height, setHeight] = useState(profileInfo ? profileInfo.height : "");
+    const [weight, setWeight] = useState(profileInfo ? profileInfo.weight : "");
+    const [allergies, setAllergies] = useState(profileInfo ? profileInfo.allergies : "");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log(isprofileFilled)
+        if (isprofileFilled === 'yes') {
 
-        // const response = await fetch("/api/patientProfile/", {
-        //     method: "P",
-        //     body: JSON.stringify({ rollno: "21CS999", name: "Jhon Doe" }),
-        //     headers: { "Content-Type": "application/json" },
-        // });
-        // const json = await response.json();
-        // // If request is not successful, display error message
-        // if (!response.ok) {
-        //     console.log(json.error);
-        // }
-        // else {
-        //     console.log("POSTED");
-        // }
+            let changes = {};
+            if (profileInfo.name !== name) changes.name = name;
+            if (profileInfo.year !== year) changes.year = year;
+            if (profileInfo.rollno !== rollNo) changes.rollno = rollNo;
+            if (profileInfo.classAndSec !== classAndSec) changes.classAndSec = classAndSec;
+            if (profileInfo.gender !== gender) changes.gender = gender;
+            if (profileInfo.dob !== dob) changes.dob = dob;
+            if (profileInfo.bloodGroup !== blood) changes.bloodGroup = blood;
+            if (profileInfo.age !== age) changes.age = age;
+            if (profileInfo.height !== height) changes.height = height;
+            if (profileInfo.weight !== weight) changes.weight = weight;
+            if (profileInfo.allergies !== allergies) changes.allergies = allergies;
 
 
+            const response = await fetch("/api/patientProfiles/" + profileInfo._id, {
+                method: "PATCH",
+                body: JSON.stringify(changes),
+                headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${user.token}` },
+            });
+            const json = await response.json();
+            // If request is not successful, display error message
+            if (!response.ok) {
+                console.log(json.error);
+            }
+            else {
+                console.log("PATCHED");
+                console.log(json);
+
+                Object.keys(changes).forEach(key => {
+                    profileInfo[key] = changes[key];
+                })
+                setProfileInfo(profileInfo);
+            }
+        }
+        else {
+            const response = await fetch("/api/patientProfiles/", {
+                method: "POST",
+                body: JSON.stringify({
+                    name,
+                    year,
+                    rollno: rollNo,
+                    classAndSec,
+                    gender,
+                    dob,
+                    bloodGroup: blood,
+                    age,
+                    height,
+                    weight,
+                    allergies,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${user.token}`
+                },
+            });
+            const json = await response.json();
+            // If request is not successful, display error message
+            if (!response.ok) {
+                console.log(json.error);
+            }
+            else {
+                console.log("POSTED");
+                setIsProfileFilled('done');
+                setTimeout(() => {
+                    setIsProfileFilled('yes');
+                }, 4000);
+            }
+        }
     }
 
 
     return (
-        <div className="w-full flex text-[30px] font-Fredoka bg-[#cde1f08a] p-[20px] rounded-[20px] items-center">
-            <form className="flex justify-evenly w-full  ">
-                <div className="py-[10px] ">
-                    <img className="w-[200px] h-[200px] rounded-full border-[1px] mb-[20px] " src={dummy} alt='profile avathar' />
-                </div>
-                <div className='w-[70%] '>
-                    <div className="p-[30px] gap-y-[20px] flex flex-col justify-between rounded-[20px] bg-[#f8feff] shadow-lg mb-[20px] ">
-                        <InputField title={"Name"} value={name} setValue={setName} />
-                        <InputField title={"Year"} value={year} setValue={setYear} />
-                        <InputField title={"Roll Number"} value={rollNo} setValue={setRollNo} />
-                        <InputField title={"Class"} value={userclass} setValue={setUserClass} />
-                        <InputField title={"Gender"} value={gender} setValue={setGender} />
-                        <InputField title={"Date Of Birth"} value={dob} setValue={setDob} />
-                        <InputField title={"Blood Group"} value={blood} setValue={setBlood} />
-                        <InputField title={"Age"} value={age} setValue={setAge} />
-                        <InputField title={"Height"} value={height} setValue={setHeight} />
-                        <InputField title={"Weight"} value={weight} setValue={setWeight} />
-                        <InputField title={"Allergies"} value={allergies} setValue={setAllergies} />
+        <div className='text-[30px] font-Fredoka '>
+            {(isprofileFilled === 'no') && <div className='p-[20px] '>Please Fill All The Details !</div>}
+            {(isprofileFilled === 'done') && <div className='p-[20px] '>Profile filled successfully !</div>}
+            <div className="w-full flex bg-[#cde1f08a] p-[20px] rounded-[20px] items-center">
+                <form className="flex justify-evenly w-full  ">
+                    <div className="py-[10px] ">
+                        <img className="w-[200px] h-[200px] rounded-full border-[1px] mb-[20px] " src={dummy} alt='profile avathar' />
                     </div>
-                    <button type='submit' onClick={handleSubmit} className='px-[20px] py-[5px] bg-slate-600 text-white rounded-[20px]' >Submit</button>
-                </div>
-            </form>
+                    <div className='w-[70%] '>
+                        <div className="p-[30px] gap-y-[20px] flex flex-col justify-between rounded-[20px] bg-[#daf9ff] shadow-lg mb-[20px] ">
+                            <InputField title={"Name"} value={name} setValue={setName} placeholder={"Jhon Doe"} />
+                            <InputField title={"Year"} value={year} setValue={setYear} placeholder={"2nd year"} />
+                            <InputField title={"Roll Number"} value={rollNo} setValue={setRollNo} placeholder={"21CS001"} />
+                            <InputField title={"Class"} value={classAndSec} setValue={setClassAndSec} placeholder={"CSE - B"} />
+                            <InputField title={"Gender"} value={gender} setValue={setGender} placeholder={"Male"} />
+                            <InputField title={"Date Of Birth"} value={dob} setValue={setDob} placeholder={"DD/MM/YYYY"} />
+                            <InputField title={"Blood Group"} value={blood} setValue={setBlood} placeholder={"O+"} />
+                            <InputField title={"Age"} value={age} setValue={setAge} placeholder={"18"} />
+                            <InputField title={"Height"} value={height} setValue={setHeight} placeholder={"162"} />
+                            <InputField title={"Weight"} value={weight} setValue={setWeight} placeholder={"68"} />
+                            <InputField title={"Allergies"} value={allergies} setValue={setAllergies} placeholder={"Penuts"} />
+                        </div>
+                        <button type='submit' onClick={handleSubmit} className='px-[20px] py-[5px] bg-slate-600 text-white rounded-[20px]' >Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
