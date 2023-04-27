@@ -9,7 +9,7 @@ const getPrescriptions = async (req, res) => {
     res.status(200).json(prescription);
 }
 
-//  get my Prescription
+//  get Prescription
 const getPrescription = async (req, res) => {
     const { id } = req.params;
 
