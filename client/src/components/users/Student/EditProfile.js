@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import dummy from '../../../assets/avatar-dummy.png';
 import InputField from './InputField';
+import { useNavigate } from 'react-router-dom';
 
-export default function EditProfile({ setSelected, isprofileFilled, setIsProfileFilled, user, profileInfo, setProfileInfo }) {
+export default function EditProfile({ setSelected, user, profileInfo, setProfileInfo, setAppointmentOverlay, setPosted }) {
     setSelected('edit');
+
+    const navigate = useNavigate();
 
     const [name, setName] = useState(profileInfo ? profileInfo.name : "");
     const [year, setYear] = useState(profileInfo ? profileInfo.year : "");
@@ -19,8 +22,7 @@ export default function EditProfile({ setSelected, isprofileFilled, setIsProfile
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(isprofileFilled)
-        if (isprofileFilled === 'yes') {
+        if (profileInfo) {
 
             let changes = {};
             if (profileInfo.name !== name) changes.name = name;
@@ -54,6 +56,14 @@ export default function EditProfile({ setSelected, isprofileFilled, setIsProfile
                     profileInfo[key] = changes[key];
                 })
                 setProfileInfo(profileInfo);
+
+                setAppointmentOverlay(true);
+                setPosted('profile');
+                setTimeout(() => {
+                    setAppointmentOverlay(false);
+                    setPosted('');
+                    navigate("/myProfile");
+                }, 3500);
             }
         }
         else {
@@ -84,10 +94,13 @@ export default function EditProfile({ setSelected, isprofileFilled, setIsProfile
             }
             else {
                 console.log("POSTED");
-                setIsProfileFilled('done');
+                setAppointmentOverlay(true);
+                setPosted('profile');
                 setTimeout(() => {
-                    setIsProfileFilled('yes');
-                }, 4000);
+                    setAppointmentOverlay(false);
+                    setPosted('');
+                    navigate("/myProfile");
+                }, 3500);
             }
         }
     }
@@ -95,8 +108,7 @@ export default function EditProfile({ setSelected, isprofileFilled, setIsProfile
 
     return (
         <div className='text-[30px] font-Fredoka '>
-            {(isprofileFilled === 'no') && <div className='p-[20px] '>Please Fill All The Details !</div>}
-            {(isprofileFilled === 'done') && <div className='p-[20px] '>Profile filled successfully !</div>}
+            {(profileInfo === 'no') && <div className='p-[20px] '>Please Fill All The Details !</div>}
             <div className="w-full flex bg-[#cde1f08a] shadow-lg p-[20px] rounded-[20px] items-center">
                 <form className="flex justify-evenly w-full  ">
                     <div className="py-[10px] ">

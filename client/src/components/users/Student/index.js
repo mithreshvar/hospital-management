@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import StudentProfile from "./StudentProfile";
 import Button from "../../common/Button";
 import { useState, useEffect } from "react";
@@ -15,11 +15,9 @@ export default function Student() {
     const { user } = useAuthContext();
     const navigate = useNavigate();
     let [profileInfo, setProfileInfo] = useState(null);
-    let [isprofileFilled, setIsProfileFilled] = useState('no');
 
     useEffect(() => {
         const fetchPatientProfile = async () => {
-            setIsProfileFilled('no');
             const response = await fetch("/api/patientProfiles/my", {
                 headers: { 'Authorization': `Bearer ${user.token}` },
             });
@@ -31,7 +29,6 @@ export default function Student() {
             const json = await response.json();
             if (response.ok) {
                 setProfileInfo(json);
-                setIsProfileFilled('yes');
                 navigate('/myProfile');
             }
         }
@@ -40,8 +37,7 @@ export default function Student() {
     }, []);
 
     let [selected, setSelected] = useState('');
-    let [postedAppointment, setPostedAppointment] = useState(false);
-    let [error, setError] = useState(false);
+    let [posted, setPosted] = useState('');
     let [appointmentOverlay, setAppointmentOverlay] = useState(false);
 
     const handleSubmit = async (event) => {
@@ -53,11 +49,11 @@ export default function Student() {
             headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${user.token}` },
         });
         const json = await response.json();
-        setPostedAppointment(true); // Appointment sent overlay message
+        setPosted('appointment'); // Appointment sent overlay message
         // If request is not successful, display error message
         if (!response.ok) {
             console.log(json.error);
-            setError(true);
+            setPosted('error');
         }
         else {
             console.log("POSTED");
@@ -66,8 +62,7 @@ export default function Student() {
 
         setTimeout(() => {
             setAppointmentOverlay(false);
-            setError(false);
-            setPostedAppointment(false);
+            setPosted('');
         }, 4000); // hide the overlay
     }
 
@@ -88,25 +83,33 @@ export default function Student() {
                     <Routes>
                         <Route path="/myProfile" element={<StudentProfile setOverlay={setAppointmentOverlay} setSelected={setSelected} profileInfo={profileInfo} />} />
                         <Route path="/history" element={<StudentHistory setSelected={setSelected} />} />
-                        <Route path="/edit" element={<EditProfile setSelected={setSelected} isprofileFilled={isprofileFilled} setIsProfileFilled={setIsProfileFilled} user={user} profileInfo={profileInfo} setProfileInfo={setProfileInfo} />} />
+                        <Route path="/edit" element={<EditProfile setSelected={setSelected} user={user} profileInfo={profileInfo} setProfileInfo={setProfileInfo} setAppointmentOverlay={setAppointmentOverlay} setPosted={setPosted} />} />
                     </Routes>
                 </div>
             </div>
             {appointmentOverlay &&
                 <div className="z-[3] absolute top-0 bg-[#515a7be0] h-full w-full py-[40px] px-[70px] flex items-center justify-center " >
-                    <div className={(error) ? "z-[5] bg-[#f4f6fc] w-[600px] h-[280px] px-[30px] text-center rounded-[40px] text-[32px] flex items-center justify-center border-[#ff3131] border-[3px] " : "z-[5] bg-[#f4f6fc] w-[600px] h-[280px] px-[30px] text-center rounded-[40px] text-[32px] flex items-center justify-center "} >
+                    <div className={(posted === 'error') ? "z-[5] bg-[#f4f6fc] w-[600px] h-[280px] px-[30px] text-center rounded-[40px] text-[32px] flex items-center justify-center border-[#ff3131] border-[3px] " : "z-[5] bg-[#f4f6fc] w-[600px] h-[280px] px-[30px] text-center rounded-[40px] text-[32px] flex items-center justify-center "} >
                         {
-                            (postedAppointment) ?
-                                ((error) ?
-                                    <div className="text-[#ff3131] ">
-                                        Something Went Wrong Please Try Again Later!
-                                    </div>
-                                    :
-                                    <div>
-                                        Your Appointment has been sent successfully!
-                                    </div>
-                                )
-                                :
+                            (
+                                posted === 'appointment' &&
+                                <div>
+                                    Your Appointment has been sent successfully!
+                                </div>
+                            ) ||
+                            (
+                                posted === 'error' &&
+                                <div className="text-[#ff3131] ">
+                                    Something Went Wrong Please Try Again Later!
+                                </div>
+                            ) ||
+                            (
+                                posted === 'profile' &&
+                                <div>
+                                    Your profile has been updated!
+                                </div>
+                            ) ||
+                            (
                                 <div>
                                     <div>Would you like to Fix Appointment?</div>
                                     <div className="flex justify-evenly mt-[35px] ">
@@ -114,6 +117,9 @@ export default function Student() {
                                         <button className="w-[100px] h-[50px] bg-[#ff3131] flex items-center justify-center rounded-[15px] " onClick={() => setAppointmentOverlay(false)}  >No</button>
                                     </div>
                                 </div>
+                            )
+
+
                         }
                     </div>
                 </div>
